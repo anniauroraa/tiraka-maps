@@ -10,6 +10,7 @@
 #include <limits>
 #include <functional>
 #include <unordered_map>
+#include <algorithm>
 
 // Types for IDs
 using PlaceID = long int;

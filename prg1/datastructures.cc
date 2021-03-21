@@ -49,7 +49,7 @@ std::vector<PlaceID> Datastructures::all_places()
 {
     places_list_.clear();
 
-    for ( auto const& place : places_ ) {
+    for ( auto const& place : places_ ) {                   // O(n)
         places_list_.push_back( place.first );
     }
     return places_list_;
@@ -57,9 +57,9 @@ std::vector<PlaceID> Datastructures::all_places()
 
 bool Datastructures::add_place(PlaceID id, const Name& name, PlaceType type, Coord xy)
 {
-    if ( places_.find(id) == places_.end() ) {
+    if ( places_.find(id) == places_.end() ) {              // O(n)
         Place new_struct = {name, type, xy};
-        places_.insert({id, new_struct});
+        places_.insert({id, new_struct});                   // O(1)
 
         return true;
     }
@@ -68,17 +68,18 @@ bool Datastructures::add_place(PlaceID id, const Name& name, PlaceType type, Coo
 
 std::pair<Name, PlaceType> Datastructures::get_place_name_type(PlaceID id)
 {    
-    if ( places_.find(id) != places_.end() ) {
-        return {places_[id].name, places_[id].type };
+    if ( places_.find(id) == places_.end() ) {              // O(n)
+         return {NO_NAME, PlaceType::NO_TYPE};
     }
-    return {NO_NAME, PlaceType::NO_TYPE};
+    return {places_[id].name, places_[id].type };           // O(n)
 }
 
 Coord Datastructures::get_place_coord(PlaceID id)
 {
-    if ( places_.find(id) == places_.end() ) { return NO_COORD; }
-
-    return places_[id].xy;
+    if ( places_.find(id) == places_.end() ) {              // O(n)
+        return NO_COORD;
+    }
+    return places_[id].xy;                                  // O(n)
 }
 
 bool Datastructures::add_area(AreaID id, const Name &name, std::vector<Coord> coords)
@@ -109,39 +110,91 @@ void Datastructures::creation_finished()
 
 std::vector<PlaceID> Datastructures::places_alphabetically()
 {
-    places_list_.clear();
+    std::vector<std::pair<PlaceID, Place>> place_pairs;
+    std::copy(places_.begin(), places_.end(),                   // O(n)
+              std::back_inserter(place_pairs));
 
-    return {};
+    //Create sorted list containing pairs
+    std::sort(place_pairs.begin(), place_pairs.end(),           // O(n log n)
+                [](const std::pair<PlaceID, Place>& l,
+                   const std::pair<PlaceID, Place>& r) {
+                    if (l.second.name != r.second.name)
+                        return l.second.name < r.second.name;
+
+                    return l.first < r.first;
+                });
+
+    places_list_.clear();                                       // O(1)
+    for ( auto const& place : place_pairs ) {                   // O(n)
+       places_list_.push_back(place.first);                     // O(1)
+    }
+
+    return places_list_;
 }
 
 std::vector<PlaceID> Datastructures::places_coord_order()
 {
-    // Replace this comment with your implementation
-    return {};
+    std::vector<std::pair<PlaceID, Place>> place_pairs;
+    std::copy(places_.begin(), places_.end(), std::back_inserter(place_pairs));
+
+    //Create sorted list containing pairs
+    std::sort(place_pairs.begin(), place_pairs.end(),
+                [](const std::pair<PlaceID, Place>& l,
+                   const std::pair<PlaceID, Place>& r) {
+                    if (l.second.xy != r.second.xy)
+                        return l.second.xy < r.second.xy;
+
+                    return l.first < r.first;
+                });
+
+    places_list_.clear();
+    for ( auto const& place : place_pairs ) {
+       places_list_.push_back(place.first);
+    }
+
+    return places_list_;
 }
 
 std::vector<PlaceID> Datastructures::find_places_name(Name const& name)
 {
-    // Replace this comment with your implementation
-    return {};
+    places_list_.clear();
+
+    for ( auto place : places_ ) {                          // O(n)
+        if ( place.second.name == name ) {
+            places_list_.push_back(place.first);            // O(1)
+        }
+    }
+
+    return places_list_;
 }
 
 std::vector<PlaceID> Datastructures::find_places_type(PlaceType type)
 {
-    // Replace this comment with your implementation
-    return {};
+    places_list_.clear();
+
+    for ( auto place : places_ ) {
+        if ( place.second.type == type ) {
+            places_list_.push_back(place.first);
+        }
+    }
+
+    return places_list_;
 }
 
 bool Datastructures::change_place_name(PlaceID id, const Name& newname)
 {
-    // Replace this comment with your implementation
-    return false;
+    if ( places_.find(id) == places_.end() ) { return false; }  // O(n)
+
+    places_[id].name = newname;                                 // O(n)
+    return true;
 }
 
 bool Datastructures::change_place_coord(PlaceID id, Coord newcoord)
 {
-    // Replace this comment with your implementation
-    return false;
+    if ( places_.find(id) == places_.end() ) { return false; }
+
+    places_[id].xy = newcoord;
+    return true;
 }
 
 std::vector<AreaID> Datastructures::all_areas()
