@@ -9,6 +9,7 @@
 #include <utility>
 #include <limits>
 #include <functional>
+#include <unordered_map>
 
 // Types for IDs
 using PlaceID = long int;
@@ -184,6 +185,16 @@ public:
 
 private:
     // Add stuff needed for your class implementation here
+
+    struct Place {
+        Name name = NO_NAME;
+        PlaceType type = PlaceType::NO_TYPE;
+        Coord xy;
+    };
+
+    std::unordered_map<PlaceID, Place> places_;
+    std::vector<PlaceID> places_list_;
+
 
 };
 

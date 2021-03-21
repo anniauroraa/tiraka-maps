@@ -47,26 +47,38 @@ void Datastructures::clear_all()
 
 std::vector<PlaceID> Datastructures::all_places()
 {
-    // Replace this comment with your implementation
-    return {};
+    places_list_.clear();
+
+    for ( auto const& place : places_ ) {
+        places_list_.push_back( place.first );
+    }
+    return places_list_;
 }
 
 bool Datastructures::add_place(PlaceID id, const Name& name, PlaceType type, Coord xy)
 {
-    // Replace this comment with your implementation
+    if ( places_.find(id) == places_.end() ) {
+        Place new_struct = {name, type, xy};
+        places_.insert({id, new_struct});
+
+        return true;
+    }
     return false;
 }
 
 std::pair<Name, PlaceType> Datastructures::get_place_name_type(PlaceID id)
-{
-    // Replace this comment with your implementation
+{    
+    if ( places_.find(id) != places_.end() ) {
+        return {places_[id].name, places_[id].type };
+    }
     return {NO_NAME, PlaceType::NO_TYPE};
 }
 
 Coord Datastructures::get_place_coord(PlaceID id)
 {
-    // Replace this comment with your implementation
-    return NO_COORD;
+    if ( places_.find(id) == places_.end() ) { return NO_COORD; }
+
+    return places_[id].xy;
 }
 
 bool Datastructures::add_area(AreaID id, const Name &name, std::vector<Coord> coords)
@@ -97,7 +109,8 @@ void Datastructures::creation_finished()
 
 std::vector<PlaceID> Datastructures::places_alphabetically()
 {
-    // Replace this comment with your implementation
+    places_list_.clear();
+
     return {};
 }
 
