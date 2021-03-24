@@ -99,47 +99,58 @@ public:
 
     // Estimate of performance: O(n)
     // Short rationale for estimate: for-loop is the heaviest part and it's
-    // consumption is linear
+    // efficiency is linear
     std::vector<PlaceID> all_places();
 
     // Estimate of performance: O(n) ≈ Θ(1)
     // Short rationale for estimate: Finding the right index in unordered map is
-    // the heaviest part and it's consumption is constant in average but linear
+    // the heaviest part and it's efficiency is constant in average but linear
     // in worst case
     bool add_place(PlaceID id, Name const& name, PlaceType type, Coord xy);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's efficiency is constant in average but linear
+    // in worst case
     std::pair<Name, PlaceType> get_place_name_type(PlaceID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's efficiency is constant in average but linear
+    // in worst case
     Coord get_place_coord(PlaceID id);
 
     // We recommend you implement the operations below only after implementing the ones above
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n log n)
+    // Short rationale for estimate: std::sort is the heaviest and it's
+    // performance is that much (includes the sorting method which is constant)
     std::vector<PlaceID> places_alphabetically();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: TODO
+    // Short rationale for estimate: TODO
     std::vector<PlaceID> places_coord_order();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: for-loop is the heaviest and it's
+    // performance is linear
     std::vector<PlaceID> find_places_name(Name const& name);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: for-loop is the heaviest and it's
+    // performance is linear
     std::vector<PlaceID> find_places_type(PlaceType type);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's efficiency is constant in average but linear
+    // in worst case
     bool change_place_name(PlaceID id, Name const& newname);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's efficiency is constant in average but linear
+    // in worst case
     bool change_place_coord(PlaceID id, Coord newcoord);
 
     // We recommend you implement the operations below only after implementing the ones above
@@ -150,24 +161,31 @@ public:
     // in worst case
     bool add_area(AreaID id, Name const& name, std::vector<Coord> coords);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's efficiency is constant in average but linear
+    // in worst case
     Name get_area_name(AreaID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's efficiency is constant in average but linear
+    // in worst case
     std::vector<Coord> get_area_coords(AreaID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(1)
+    // Short rationale for estimate: Performance stays constant. Function
+    // only returns a list
     std::vector<AreaID> all_areas();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Consumption is a sum of linear tasks
+    // so the asymptotic performance is linear too
     bool add_subarea_to_area(AreaID id, AreaID parentid);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: While-loop is the heaviest and it's
+    // performance is linear in worst case. Inside the loop everything stays constant.
     std::vector<AreaID> subarea_in_areas(AreaID id);
 
     // Non-compulsory operations
@@ -184,8 +202,10 @@ public:
     // Short rationale for estimate:
     std::vector<PlaceID> places_closest_to(Coord xy, PlaceType type);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Performance of the for-loop and removing an
+    // item is linear because removing an item of std::list is constant and
+    // for-loop's performance is linear
     bool remove_place(PlaceID id);
 
     // Estimate of performance:

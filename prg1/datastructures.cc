@@ -61,15 +61,15 @@ std::vector<PlaceID> Datastructures::all_places()
 
 bool Datastructures::add_place(PlaceID id, const Name& name, PlaceType type, Coord xy)
 {
-    if ( places_.find(id) == places_.end() ) {              // O(n)
-        Place new_struct = {name, type, xy};
-        places_.insert({id, new_struct});                   // O(1)
-
-        places_list_.push_back(id);
-
-        return true;
+    if ( places_.find(id) != places_.end() ) {              // O(n)
+        return false;
     }
-    return false;
+    Place new_struct = {name, type, xy};
+    places_.insert({id, new_struct});                       // O(1)
+
+    places_list_.push_back(id);
+
+    return true;
 }
 
 std::pair<Name, PlaceType> Datastructures::get_place_name_type(PlaceID id)
@@ -155,6 +155,9 @@ std::vector<PlaceID> Datastructures::places_coord_order()
     std::sort(place_pairs.begin(), place_pairs.end(),
                 [](const std::pair<PlaceID, Place>& l,
                    const std::pair<PlaceID, Place>& r) {
+
+                    // TODO
+
                     if (l.second.xy != r.second.xy)
                         return l.second.xy < r.second.xy;
 
@@ -224,8 +227,8 @@ bool Datastructures::add_subarea_to_area(AreaID id, AreaID parentid)
     else if ( areas_[id].parent != nullptr ) {
         return false;
     }
-
     areas_[id].parent = &areas_[parentid];
+    // children's pointers here
 
     return true;
 }
