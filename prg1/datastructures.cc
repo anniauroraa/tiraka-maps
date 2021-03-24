@@ -31,7 +31,7 @@ Datastructures::Datastructures()
 
 Datastructures::~Datastructures()
 {
-    // Replace this comment with your implementation
+    clear_all();
 }
 
 int Datastructures::place_count()
@@ -95,7 +95,6 @@ bool Datastructures::add_area(AreaID id, const Name &name, std::vector<Coord> co
 
         return true;
     }
-
     return false;
 }
 
@@ -241,8 +240,11 @@ std::vector<AreaID> Datastructures::subarea_in_areas(AreaID id)
 {
     areas_list_.clear();
 
-    if ( areas_[id].parent == nullptr ) {
+    if ( areas_.find(id) == areas_.end() ) {
         return {NO_AREA};
+    }
+    else if ( areas_[id].parent == nullptr ) {
+        return {};
     }
 
     struct Area *current_parent = areas_[id].parent;
@@ -263,7 +265,19 @@ std::vector<PlaceID> Datastructures::places_closest_to(Coord xy, PlaceType type)
 
 bool Datastructures::remove_place(PlaceID id)
 {
-    // Replace this comment with your implementation
+    if ( places_.find(id) == places_.end() ) {
+        return false;
+    }
+
+    places_.erase(id);
+
+    int index = 0;
+    for ( PlaceID current_id : places_list_ ) {
+        if ( current_id == id ) {
+            places_list_.erase(places_list_.begin()+index-1);
+        }
+        index++;
+    }
     return false;
 }
 

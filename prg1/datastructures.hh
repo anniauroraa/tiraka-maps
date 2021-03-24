@@ -86,20 +86,25 @@ public:
     Datastructures();
     ~Datastructures();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(1)
+    // Short rationale for estimate: Performance doesn't change in relation
+    // to the size of the data
     int place_count();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(1)
+    // Short rationale for estimate: Performance doesn't change in relation
+    // to the size of the data
     void clear_all();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: for-loop is the heaviest part and it's
+    // consumption is linear
     std::vector<PlaceID> all_places();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's consumption is constant in average but linear
+    // in worst case
     bool add_place(PlaceID id, Name const& name, PlaceType type, Coord xy);
 
     // Estimate of performance:
@@ -138,8 +143,10 @@ public:
 
     // We recommend you implement the operations below only after implementing the ones above
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Finding the right index in unordered map is
+    // the heaviest part and it's consumption is constant in average but linear
+    // in worst case
     bool add_area(AreaID id, Name const& name, std::vector<Coord> coords);
 
     // Estimate of performance:
