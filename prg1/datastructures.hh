@@ -185,7 +185,6 @@ public:
     AreaID common_area_of_subareas(AreaID id1, AreaID id2);
 
 private:
-    // Add stuff needed for your class implementation here
 
     struct Place {
         Name name = NO_NAME;
@@ -196,6 +195,19 @@ private:
     std::unordered_map<PlaceID, Place> places_;
     std::vector<PlaceID> places_list_;
 
+    int placecount_ = 0;
+
+    struct Area {
+        AreaID id = NO_AREA;
+        Name name = NO_NAME;
+        std::vector<Coord> shape;
+
+        struct Area *parent = nullptr;
+        std::vector<struct Area*> children;
+    };
+
+    std::unordered_map<AreaID, Area> areas_;
+    std::vector<AreaID> areas_list_;
 
 };
 
