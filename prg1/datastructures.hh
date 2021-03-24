@@ -11,6 +11,7 @@
 #include <functional>
 #include <unordered_map>
 #include <algorithm>
+#include <list>
 
 // Types for IDs
 using PlaceID = long int;
@@ -200,9 +201,7 @@ private:
     };
 
     std::unordered_map<PlaceID, Place> places_;
-    std::vector<PlaceID> places_list_;
-
-    int placecount_ = 0;
+    std::list<PlaceID> places_list_;
 
     struct Area {
         AreaID id = NO_AREA;
