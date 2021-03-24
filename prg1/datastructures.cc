@@ -125,7 +125,7 @@ void Datastructures::creation_finished()
 std::vector<PlaceID> Datastructures::places_alphabetically()
 {
     std::vector<std::pair<PlaceID, Place>> place_pairs;
-    std::copy(places_.begin(), places_.end(),                   // O(n)
+    std::copy(places_.begin(), places_.end(),                    // O(n)
               std::back_inserter(place_pairs));
 
     //Create sorted list containing pairs
@@ -138,9 +138,9 @@ std::vector<PlaceID> Datastructures::places_alphabetically()
                     return l.first < r.first;
                 });
 
-    std::vector<PlaceID> alphabetical_list;                                       // O(1)
+    std::vector<PlaceID> alphabetical_list;                     // O(1)
     for ( auto const& place : place_pairs ) {                   // O(n)
-       alphabetical_list.push_back(place.first);                     // O(1)
+       alphabetical_list.push_back(place.first);                // O(1)
     }
 
     return alphabetical_list;
@@ -153,23 +153,24 @@ std::vector<PlaceID> Datastructures::places_coord_order()
 
     //Create sorted list containing pairs
     std::sort(place_pairs.begin(), place_pairs.end(),
-                [](const std::pair<PlaceID, Place>& l,
-                   const std::pair<PlaceID, Place>& r) {
+                [](const std::pair<PlaceID, Place>& pair1,
+                   const std::pair<PlaceID, Place>& pair2) {
+                    Coord coord1 = pair1.second.xy;
+                    Coord coord2 = pair2.second.xy;
 
-                    // TODO
-
-                    if (l.second.xy != r.second.xy)
-                        return l.second.xy < r.second.xy;
-
-                    return l.first < r.first;
+                    if ( coord1 != coord2 ) {
+                        return (sqrt(pow(coord1.x,2)+pow(coord1.y,2))
+                                 < sqrt(pow(coord2.x,2)+pow(coord2.y,2)));
+                    }
+                    return pair1.first < pair2.first;
                 });
 
-    std::vector<PlaceID> alphabetical_list;
+    std::vector<PlaceID> right_order;
     for ( auto const& place : place_pairs ) {
-       alphabetical_list.push_back(place.first);
+       right_order.push_back(place.first);
     }
 
-    return alphabetical_list;
+    return right_order;
 }
 
 std::vector<PlaceID> Datastructures::find_places_name(Name const& name)
@@ -228,7 +229,7 @@ bool Datastructures::add_subarea_to_area(AreaID id, AreaID parentid)
         return false;
     }
     areas_[id].parent = &areas_[parentid];
-    // children's pointers here
+    areas_[parentid].children.push_back(&areas_[id]);
 
     return true;
 }
@@ -280,8 +281,23 @@ bool Datastructures::remove_place(PlaceID id)
 
 std::vector<AreaID> Datastructures::all_subareas_in_area(AreaID id)
 {
-    // Replace this comment with your implementation
-    return {NO_AREA};
+    std::vector<AreaID> subareas;
+
+    if ( areas_.find(id) == areas_.end() ) {
+        return {NO_AREA};
+    }
+    else if ( areas_[id].children.size() == 0 ) {
+        return {};
+    }
+
+    std::vector<struct Area*> *current_children = &areas_[id].children;
+
+    /* while ( current_children.size() != 0  ) {
+        areas.push_back(current_parent->id);
+        current_parent = current_parent->parent;
+    }
+    */
+    return subareas;
 }
 
 AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)

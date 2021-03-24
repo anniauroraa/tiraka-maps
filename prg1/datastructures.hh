@@ -235,6 +235,8 @@ private:
     std::unordered_map<AreaID, Area> areas_;
     std::vector<AreaID> areas_list_;
 
+
+
 };
 
 #endif // DATASTRUCTURES_HH
