@@ -91,7 +91,7 @@ Coord Datastructures::get_place_coord(PlaceID id)
 bool Datastructures::add_area(AreaID id, const Name &name, std::vector<Coord> coords)
 {
     if ( areas_.find(id) == areas_.end() ) {
-        Area new_struct = {id, name, coords, nullptr, {nullptr}};
+        Area new_struct = {id, name, coords, nullptr, {}};
         areas_.insert({id, new_struct});
         areas_list_.push_back(id);
         return true;
@@ -229,7 +229,7 @@ bool Datastructures::add_subarea_to_area(AreaID id, AreaID parentid)
         return false;
     }
     areas_[id].parent = &areas_[parentid];
-    areas_[parentid].children.push_back(&areas_[id]);
+    areas_[parentid].children.push_back(id);
 
     return true;
 }
@@ -281,23 +281,30 @@ bool Datastructures::remove_place(PlaceID id)
 
 std::vector<AreaID> Datastructures::all_subareas_in_area(AreaID id)
 {
-    std::vector<AreaID> subareas;
+    subareas_.clear();
 
     if ( areas_.find(id) == areas_.end() ) {
         return {NO_AREA};
     }
-    else if ( areas_[id].children.size() == 0 ) {
-        return {};
+
+    check_children(id);
+
+    return subareas_;
+}
+
+void Datastructures::check_children(AreaID id)
+{
+    std::vector<AreaID> current_children = areas_[id].children;
+
+    if ( current_children.size() == 0 ) {
+        return;
     }
 
-    std::vector<struct Area*> *current_children = &areas_[id].children;
+    subareas_.insert(subareas_.end(), current_children.begin(), current_children.end());
 
-    /* while ( current_children.size() != 0  ) {
-        areas.push_back(current_parent->id);
-        current_parent = current_parent->parent;
+    for ( auto child : current_children ) {
+        check_children(child);
     }
-    */
-    return subareas;
 }
 
 AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
@@ -305,3 +312,5 @@ AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
     // Replace this comment with your implementation
     return NO_AREA;
 }
+
+

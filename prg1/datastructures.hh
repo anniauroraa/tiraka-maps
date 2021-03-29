@@ -127,8 +127,9 @@ public:
     // performance is that much (includes the sorting method which is constant)
     std::vector<PlaceID> places_alphabetically();
 
-    // Estimate of performance: TODO
-    // Short rationale for estimate: TODO
+    // Estimate of performance: O(n log n)
+    // Short rationale for estimate: std::sort is the heaviest and it's
+    // performance is that much because the sorting method stays constant
     std::vector<PlaceID> places_coord_order();
 
     // Estimate of performance: O(n)
@@ -194,8 +195,9 @@ public:
     // Short rationale for estimate:
     void creation_finished();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: Θ(n)
+    // Short rationale for estimate: function uses recursion and it's time
+    // consumption is linear. Recursive algorithm will call itself maximum of n times.
     std::vector<AreaID> all_subareas_in_area(AreaID id);
 
     // Estimate of performance:
@@ -214,6 +216,8 @@ public:
 
 private:
 
+    void check_children(AreaID id);
+
     struct Place {
         Name name = NO_NAME;
         PlaceType type = PlaceType::NO_TYPE;
@@ -228,14 +232,14 @@ private:
         Name name = NO_NAME;
         std::vector<Coord> shape;
 
-        struct Area *parent = nullptr;
-        std::vector<struct Area*> children;
+        struct Area* parent = nullptr;
+        std::vector<AreaID> children;
     };
 
     std::unordered_map<AreaID, Area> areas_;
     std::vector<AreaID> areas_list_;
 
-
+    std::vector<AreaID> subareas_;
 
 };
 
