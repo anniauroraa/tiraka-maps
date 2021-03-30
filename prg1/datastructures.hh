@@ -210,8 +210,9 @@ public:
     // for-loop's performance is linear
     bool remove_place(PlaceID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Estimate comes from subarea_in_areas(AreaID id)
+    // because it is used in this function and it is the heaviest part of the algorithm.
     AreaID common_area_of_subareas(AreaID id1, AreaID id2);
 
 private:

@@ -46,6 +46,7 @@ void Datastructures::clear_all()
 
     areas_list_.clear();
     areas_.clear();
+    subareas_.clear();
 }
 
 std::vector<PlaceID> Datastructures::all_places()
@@ -309,8 +310,31 @@ void Datastructures::check_children(AreaID id)
 
 AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
 {
-    // Replace this comment with your implementation
-    return NO_AREA;
+    if ( areas_.find(id1) == areas_.end() || areas_.find(id2) == areas_.end()) {
+        return NO_AREA;
+    }
+
+    std::vector<AreaID> areas1 = subarea_in_areas(id1);
+    std::vector<AreaID> areas2 = subarea_in_areas(id2);
+
+    int index;
+    if ( areas1.size() <= areas2.size() ) index = areas1.size()-1;
+    else index = areas2.size()-1;
+
+    // Check that areas have the same root
+    if ( areas1[areas1.size()-1] != areas2[areas2.size()-1] ) {
+        return NO_AREA;
+    }
+
+    AreaID common_area = areas1[areas1.size()-1];
+    while ( index >= 0 ) {
+        if ( areas1[index] == areas2[index] ) {
+            common_area = areas1[index];
+        }
+        index--;
+    }
+
+    return common_area;
 }
 
 
