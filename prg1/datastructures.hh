@@ -179,14 +179,16 @@ public:
     // only returns a list
     std::vector<AreaID> all_areas();
 
-    // Estimate of performance: O(n)
+    // Estimate of performance: O(n) ≈ Θ(1)
     // Short rationale for estimate: Consumption is a sum of linear tasks
-    // so the asymptotic performance is linear too
+    // so the asymptotic performance is linear in worst case. Average
+    // performance is close to constant
     bool add_subarea_to_area(AreaID id, AreaID parentid);
 
-    // Estimate of performance: O(n)
-    // Short rationale for estimate: While-loop is the heaviest and it's
-    // performance is linear in worst case. Inside the loop everything stays constant.
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: While-loop or finding the right index is
+    // the heaviest and it's performance is linear in worst case. Inside the
+    // loop everything stays constant. On average the performance is close to constant.
     std::vector<AreaID> subarea_in_areas(AreaID id);
 
     // Non-compulsory operations
@@ -210,7 +212,7 @@ public:
     // for-loop's performance is linear
     bool remove_place(PlaceID id);
 
-    // Estimate of performance: O(n)
+    // Estimate of performance: O(n) ≈ Θ(n)
     // Short rationale for estimate: Estimate comes from subarea_in_areas(AreaID id)
     // because it is used in this function and it is the heaviest part of the algorithm.
     AreaID common_area_of_subareas(AreaID id1, AreaID id2);

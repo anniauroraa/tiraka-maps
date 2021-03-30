@@ -310,28 +310,27 @@ void Datastructures::check_children(AreaID id)
 
 AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
 {
-    if ( areas_.find(id1) == areas_.end() || areas_.find(id2) == areas_.end()) {
-        return NO_AREA;
-    }
+    if ( areas_.find(id1) == areas_.end() || areas_.find(id2) == areas_.end()) { return NO_AREA; }
 
-    std::vector<AreaID> areas1 = subarea_in_areas(id1);
-    std::vector<AreaID> areas2 = subarea_in_areas(id2);
+    auto areas1 = subarea_in_areas(id1);
+    auto areas2 = subarea_in_areas(id2);
+
+    if ( areas1.size() == 0 || areas2.size() == 0 ) { return NO_AREA; }
 
     int index;
     if ( areas1.size() <= areas2.size() ) index = areas1.size()-1;
     else index = areas2.size()-1;
 
     // Check that areas have the same root
-    if ( areas1[areas1.size()-1] != areas2[areas2.size()-1] ) {
-        return NO_AREA;
-    }
+    if ( areas1.back() != areas2.back() ) { return NO_AREA; }
 
-    AreaID common_area = areas1[areas1.size()-1];
+    AreaID common_area = areas1.back();
     while ( index >= 0 ) {
         if ( areas1[index] == areas2[index] ) {
             common_area = areas1[index];
+            index--;
         }
-        index--;
+        else { break; }
     }
 
     return common_area;
