@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <list>
 
+
 // Types for IDs
 using PlaceID = long long int;
 using AreaID = long long int;
@@ -296,7 +297,18 @@ private:
 
     // Phase 2
 
-    std::unordered_map<WayID, std::vector<Coord>> ways_;
+    enum node { WHITE, GREY, BLACK }; // not found, found, processed
+
+    struct Way {
+        WayID id = NO_WAY;
+        std::vector<Coord> coords;
+        std::pair<Coord, Coord> edge;
+
+        node state = WHITE;
+        Distance d = NO_DISTANCE;
+    };
+
+    std::unordered_map<WayID, Way> ways_;
 
 };
 

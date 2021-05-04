@@ -354,22 +354,37 @@ bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
         return false;
     }
 
-    ways_.insert({id, coords});
+    Way new_struct = { id, coords, {coords[0], coords.back()}, WHITE };
+    ways_.insert({id, new_struct});
 
     return true;
 }
 
 std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
 {
-    // Replace this comment with your implementation
-    return {{NO_WAY, NO_COORD}};
+    std::vector<std::pair<WayID, Coord>> nearby_crossroads;
+
+    for ( auto way : ways_ ) {
+        if ( way.second.edge.first == xy ) {
+            nearby_crossroads.push_back({way.second.id, way.second.edge.second});
+        }
+        else if ( way.second.edge.second == xy ) {
+            nearby_crossroads.push_back({way.second.id, way.second.edge.first});
+        }
+    }
+
+    if ( nearby_crossroads.size() == 0 ) {
+        return {{NO_WAY, NO_COORD}};
+    }
+
+    return nearby_crossroads;
 }
 
 std::vector<Coord> Datastructures::get_way_coords(WayID id)
 {
     if ( ways_.find(id) == ways_.end() ) { return {NO_COORD}; }
 
-    return ways_[id];
+    return ways_[id].coords;
 }
 
 void Datastructures::clear_ways()
