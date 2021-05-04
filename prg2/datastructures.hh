@@ -267,6 +267,8 @@ public:
 
 private:
 
+    // Phase 1
+
     void check_children(AreaID id);
 
     struct Place {
@@ -291,6 +293,10 @@ private:
     std::vector<AreaID> areas_list_;
 
     std::vector<AreaID> subareas_;
+
+    // Phase 2
+
+    std::unordered_map<WayID, std::vector<Coord>> ways_;
 
 };
 

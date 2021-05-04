@@ -339,14 +339,24 @@ AreaID Datastructures::common_area_of_subareas(AreaID id1, AreaID id2)
 
 std::vector<WayID> Datastructures::all_ways()
 {
-    // Replace this comment with your implementation
-    return {};
+    std::vector<WayID> all_ways;
+
+    for ( auto pair : ways_ ) {
+        all_ways.push_back(pair.first);
+    }
+
+    return all_ways;
 }
 
 bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
 {   
-    // Replace this comment with your implementation
-    return false;
+    if ( ways_.find(id) != ways_.end() ) {
+        return false;
+    }
+
+    ways_.insert({id, coords});
+
+    return true;
 }
 
 std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
@@ -357,13 +367,14 @@ std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
 
 std::vector<Coord> Datastructures::get_way_coords(WayID id)
 {
-    // Replace this comment with your implementation
-    return {NO_COORD};
+    if ( ways_.find(id) == ways_.end() ) { return {NO_COORD}; }
+
+    return ways_[id];
 }
 
 void Datastructures::clear_ways()
 {
-    // Replace this comment with your implementation
+    ways_.clear();
 }
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord fromxy, Coord toxy)
