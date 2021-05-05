@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <list>
 
+#include <QDebug>
+
 
 // Types for IDs
 using PlaceID = long long int;
@@ -302,13 +304,20 @@ private:
     struct Way {
         WayID id = NO_WAY;
         std::vector<Coord> coords;
-        std::pair<Coord, Coord> edge;
-
-        node state = WHITE;
-        Distance d = NO_DISTANCE;
     };
 
     std::unordered_map<WayID, Way> ways_;
+
+    struct Crossroad {
+        Coord coordinate;
+        std::vector<std::pair<Crossroad*, Way*>> connections;
+
+        node state = WHITE;
+        Distance d = NO_DISTANCE;
+        Crossroad* previous = nullptr;
+    };
+
+    std::unordered_map<Coord, Crossroad, CoordHash> crossroads_;
 
 };
 

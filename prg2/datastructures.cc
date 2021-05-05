@@ -354,8 +354,28 @@ bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
         return false;
     }
 
-    Way new_struct = { id, coords, {coords[0], coords.back()}, WHITE };
-    ways_.insert({id, new_struct});
+    Coord first_coord = coords[0]; Coord last_coord = coords.back();
+
+    Way new_way = { id, coords };
+    ways_.insert({id, new_way});
+
+
+    // Create new crossroad if needed
+    if ( crossroads_.find(first_coord) == crossroads_.end() ) {
+
+        Crossroad first_crossroad = { first_coord, {}, WHITE, NO_DISTANCE, nullptr };
+        crossroads_.insert({first_coord, first_crossroad});
+    }
+
+    if ( crossroads_.find(last_coord) == crossroads_.end() ) {
+
+        Crossroad second_crossroad = { last_coord, {}, WHITE, NO_DISTANCE, nullptr };
+        crossroads_.insert({last_coord, second_crossroad});
+    }
+
+    // Gives one connection for both crossroads
+    crossroads_[first_coord].connections.push_back({&crossroads_[last_coord], &new_way});
+    crossroads_[last_coord].connections.push_back({&crossroads_[first_coord], &new_way});
 
     return true;
 }
@@ -364,17 +384,13 @@ std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
 {
     std::vector<std::pair<WayID, Coord>> nearby_crossroads;
 
-    for ( auto way : ways_ ) {
-        if ( way.second.edge.first == xy ) {
-            nearby_crossroads.push_back({way.second.id, way.second.edge.second});
-        }
-        else if ( way.second.edge.second == xy ) {
-            nearby_crossroads.push_back({way.second.id, way.second.edge.first});
-        }
+    if ( crossroads_.find(xy) == crossroads_.end() ) {
+        return {{NO_WAY, NO_COORD}};
     }
 
-    if ( nearby_crossroads.size() == 0 ) {
-        return {{NO_WAY, NO_COORD}};
+    for ( auto pair : crossroads_[xy].connections ) {
+
+        nearby_crossroads.push_back({pair.second->id, pair.first->coordinate});
     }
 
     return nearby_crossroads;
@@ -394,7 +410,13 @@ void Datastructures::clear_ways()
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord fromxy, Coord toxy)
 {
-    // Replace this comment with your implementation
+    std::vector<std::pair<WayID, Coord>> no_crossroad = {{NO_WAY, NO_COORD}};
+
+    if ( ways_from(fromxy) == no_crossroad ) {
+        return {{NO_COORD, NO_WAY, NO_DISTANCE}};
+    }
+
+
     return {{NO_COORD, NO_WAY, NO_DISTANCE}};
 }
 
