@@ -320,7 +320,6 @@ private:
     struct Way {
         WayID id = NO_WAY;
         std::vector<Coord> coords;
-        Distance d = NO_DISTANCE;
     };
 
     std::unordered_map<WayID, Way> ways_;
@@ -329,14 +328,14 @@ private:
         Coord coordinate;
         std::vector<std::pair<Crossroad*, Way*>> connections;
 
-        Way* my_way = nullptr;
         node state = WHITE;
+        Distance distance = NO_DISTANCE;
         Crossroad* previous = nullptr;
     };
 
     std::unordered_map<Coord, Crossroad, CoordHash> crossroads_;
     std::vector<std::tuple<Coord, WayID, Distance>> route_;
-    Distance distance_ = 0;
+    Distance sum_distance_ = 0;
 
     void find_the_path(std::queue<Crossroad*> paths, Crossroad* end, Crossroad* current);
     void clear_crossroads(std::unordered_map<Coord, Crossroad, CoordHash> crossroads);

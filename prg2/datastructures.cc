@@ -51,6 +51,7 @@ void Datastructures::clear_all()
     ways_.clear();
     crossroads_.clear();
     route_.clear();
+    sum_distance_ = 0;
 }
 
 std::vector<PlaceID> Datastructures::all_places()
@@ -360,21 +361,21 @@ bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
 
     Coord first_coord = coords[0]; Coord last_coord = coords.back();
 
-    Way new_way = { id, coords, distBetween(first_coord, last_coord) };
+    Way new_way = { id, coords };
     ways_.insert({id, new_way});
 
 
     // Create new crossroad if needed
     if ( crossroads_.find(first_coord) == crossroads_.end() ) {
 
-        Crossroad first_crossroad = { first_coord, {}, &ways_[id], WHITE, nullptr };
+        Crossroad first_crossroad = { first_coord, {}, WHITE, NO_DISTANCE ,nullptr };
         crossroads_.insert({first_coord, first_crossroad});
     }
 
     // Create new crossroad if needed
     if ( crossroads_.find(last_coord) == crossroads_.end() ) {
 
-        Crossroad second_crossroad = { last_coord, {}, &ways_[id], WHITE, nullptr };
+        Crossroad second_crossroad = { last_coord, {}, WHITE, NO_DISTANCE ,nullptr };
         crossroads_.insert({last_coord, second_crossroad});
     }
 
@@ -410,6 +411,7 @@ std::vector<Coord> Datastructures::get_way_coords(WayID id)
 void Datastructures::clear_ways()
 {
     ways_.clear();
+    crossroads_.clear();
 }
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord fromxy, Coord toxy)
@@ -419,9 +421,9 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
         return {{NO_COORD, NO_WAY, NO_DISTANCE}};
     }
 
+    route_.clear();
     clear_crossroads(crossroads_);
-    distance_ = 0;
-
+    sum_distance_ = 0;
     bool destination_found = false;
 
     std::queue<Crossroad*> paths;
@@ -445,15 +447,14 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
                 }
 
                 neighbor.first->state = GREY;
-                //neighbor.second->d += current->my_way->d;
                 neighbor.first->previous = current;
+
+                current->distance = distBetween(neighbor.first->coordinate, current->coordinate);
                 paths.push(neighbor.first);
             }
         }
         current->state = BLACK;
     }
-
-    route_.clear();
 
     if ( destination_found == true ) {
         find_the_path(paths, &crossroads_[toxy], &crossroads_[fromxy]);
@@ -469,24 +470,25 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
 void Datastructures::find_the_path(std::queue<Crossroad*> paths, Crossroad *end, Crossroad *current)
 {
     if ( current == end ) {
-        distance_ += current->my_way->d;
-        route_.push_back({ current->coordinate, NO_WAY, distance_ });
+        sum_distance_ += current->distance;
+        route_.push_back({ current->coordinate, NO_WAY, sum_distance_ });
         return;
     }
     else if ( current->previous == nullptr ) { return; }
     else {
-        if ( route_.size() == 0 )   { distance_ = 0; }
-        else                        { distance_ += current->my_way->d; }
+        if ( route_.size() == 0 )   { sum_distance_ = 0; }
+        else                        { sum_distance_ += current->distance; }
 
-        route_.push_back({ current->coordinate, current->previous->my_way->id, distance_ });
+        route_.push_back({ current->coordinate, NO_WAY, sum_distance_ });
         find_the_path(paths, end, current->previous);
     }
 }
 
-void Datastructures::clear_crossroads(std::unordered_map<Coord, Crossroad, CoordHash> paths)
+void Datastructures::clear_crossroads(std::unordered_map<Coord, Crossroad, CoordHash> all_crossroads)
 {
-    for ( auto crossroad : paths ) {
+    for ( auto crossroad : all_crossroads ) {
         crossroad.second.state = WHITE;
+        crossroad.second.distance = NO_DISTANCE;
         crossroad.second.previous = nullptr;
     }
 }
