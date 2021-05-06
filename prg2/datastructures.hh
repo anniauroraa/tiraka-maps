@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <list>
+#include <queue>
 
 #include <QDebug>
 
@@ -80,6 +81,21 @@ using Distance = int;
 // Return value for cases where Duration is unknown
 Distance const NO_DISTANCE = NO_VALUE;
 
+//struct Way {
+//        WayID id = NO_WAY;
+//        std::vector<Coord> coords;
+//    };
+
+//enum node { WHITE, GREY, BLACK }; // not found, found, processed
+
+//struct Crossroad {
+//    Coord coordinate;
+//    std::vector<std::pair<Crossroad*, Way*>> connections;
+
+//    node state = WHITE;
+//    Distance d = NO_DISTANCE;
+//    Crossroad* previous = nullptr;
+//};
 
 
 // This is the class you are supposed to implement
@@ -304,6 +320,7 @@ private:
     struct Way {
         WayID id = NO_WAY;
         std::vector<Coord> coords;
+        Distance d = NO_DISTANCE;
     };
 
     std::unordered_map<WayID, Way> ways_;
@@ -312,13 +329,18 @@ private:
         Coord coordinate;
         std::vector<std::pair<Crossroad*, Way*>> connections;
 
+        Way* my_way = nullptr;
         node state = WHITE;
-        Distance d = NO_DISTANCE;
         Crossroad* previous = nullptr;
     };
 
     std::unordered_map<Coord, Crossroad, CoordHash> crossroads_;
+    std::vector<std::tuple<Coord, WayID, Distance>> route_;
+    Distance distance_ = 0;
 
+    void find_the_path(std::queue<Crossroad*> paths, Crossroad* end, Crossroad* current);
+    void clear_crossroads(std::unordered_map<Coord, Crossroad, CoordHash> crossroads);
+    int distBetween(Coord coord1, Coord coord2);
 };
 
 #endif // DATASTRUCTURES_HH
