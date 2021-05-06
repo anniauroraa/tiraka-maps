@@ -422,7 +422,7 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
     }
 
     route_.clear();
-    clear_crossroads(crossroads_);
+    clear_crossroads();
     sum_distance_ = 0;
     bool destination_found = false;
 
@@ -437,7 +437,7 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
         Crossroad* current = paths.front();
         paths.pop();
 
-        for ( const auto& neighbor : current->connections ) {
+        for ( auto& neighbor : current->connections ) {
 
             if ( neighbor.first->state == WHITE ) {
 
@@ -484,9 +484,9 @@ void Datastructures::find_the_path(std::queue<Crossroad*> paths, Crossroad *end,
     }
 }
 
-void Datastructures::clear_crossroads(std::unordered_map<Coord, Crossroad, CoordHash> all_crossroads)
+void Datastructures::clear_crossroads()
 {
-    for ( auto crossroad : all_crossroads ) {
+    for ( auto& crossroad : crossroads_ ) {
         crossroad.second.state = WHITE;
         crossroad.second.distance = NO_DISTANCE;
         crossroad.second.previous = nullptr;

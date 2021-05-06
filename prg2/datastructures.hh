@@ -338,7 +338,7 @@ private:
     Distance sum_distance_ = 0;
 
     void find_the_path(std::queue<Crossroad*> paths, Crossroad* end, Crossroad* current);
-    void clear_crossroads(std::unordered_map<Coord, Crossroad, CoordHash> crossroads);
+    void clear_crossroads();
     int distBetween(Coord coord1, Coord coord2);
 };
 
