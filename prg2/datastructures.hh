@@ -81,23 +81,6 @@ using Distance = int;
 // Return value for cases where Duration is unknown
 Distance const NO_DISTANCE = NO_VALUE;
 
-//struct Way {
-//        WayID id = NO_WAY;
-//        std::vector<Coord> coords;
-//    };
-
-//enum node { WHITE, GREY, BLACK }; // not found, found, processed
-
-//struct Crossroad {
-//    Coord coordinate;
-//    std::vector<std::pair<Crossroad*, Way*>> connections;
-
-//    node state = WHITE;
-//    Distance d = NO_DISTANCE;
-//    Crossroad* previous = nullptr;
-//};
-
-
 // This is the class you are supposed to implement
 
 class Datastructures
@@ -263,11 +246,12 @@ public:
     void clear_ways();
 
     // Estimate of performance: O(n^2) ≈ Θ(n)
-    // Short rationale for estimate: There's for loop nested in while loop so
-    // the worst case is exponential. Usually the nested for loop is never really
-    // heavy (because there is only few connections per crossroad) so in practise
-    // the nested for loop doesn't affect the performance and so it is linear on average.
-    // linear performance comes from private function clear_crossroads().
+    // Short rationale for estimate: Functon uses breadth_first(). There's for loop
+    // nested in while loop so the worst case is exponential. Usually
+    // the nested for loop is never really heavy (because there is only few connections per crossroad)
+    // so in practise the nested for loop doesn't affect the performance and so it is
+    // linear on average. linear performance comes from private function clear_crossroads().
+
     std::vector<std::tuple<Coord, WayID, Distance>> route_any(Coord fromxy, Coord toxy);
 
     // Non-compulsory operations
@@ -346,9 +330,17 @@ private:
     std::vector<std::tuple<Coord, WayID, Distance>> route_;
     Distance sum_distance_ = 0;
 
+    // Estimate of performance: O(n^2) ≈ Θ(n)
+    // Short rationale for estimate: There's for loop nested in while loop so the worst
+    // case is exponential. Usually the nested for loop is never really heavy
+    // (because there is only few connections per crossroad)
+    // so in practise the nested for loop doesn't affect the performance and so it is
+    // linear on average. linear performance comes from private function clear_crossroads().
+    bool breadth_first(Coord fromxy, Coord toxy);
+
     // Estimate of performance: O(n)
     // Short rationale for estimate: Goes through n amount of data recursively
-    void find_the_path(std::queue<Crossroad*> paths, Crossroad* end, Crossroad* current);
+    void find_the_path(Crossroad* end, Crossroad* current);
 
     // Estimate of performance: O(n)
     // Short rationale for estimate: Goes through for loop

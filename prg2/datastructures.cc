@@ -355,7 +355,7 @@ std::vector<WayID> Datastructures::all_ways()
 
 bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
 {   
-    if ( ways_.find(id) != ways_.end() ) {
+    if ( ways_.find(id) != ways_.end() ) {              // O(n) ≈ Θ(1)
         return false;
     }
 
@@ -390,7 +390,7 @@ std::vector<std::pair<WayID, Coord>> Datastructures::ways_from(Coord xy)
 {
     std::vector<std::pair<WayID, Coord>> nearby_crossroads = {};
 
-    if ( crossroads_.find(xy) == crossroads_.end() ) {
+    if ( crossroads_.find(xy) == crossroads_.end() ) {      //O(n) ≈ Θ(1)
         return {{NO_WAY, NO_COORD}};
     }
 
@@ -421,6 +421,16 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
         return {{NO_COORD, NO_WAY, NO_DISTANCE}};
     }
 
+    if ( breadth_first(fromxy, toxy) == true ) {
+        find_the_path(&crossroads_[toxy], &crossroads_[fromxy]);
+    }
+    if ( route_.size() == 0 ){ return {}; }
+
+    return route_;
+}
+
+bool Datastructures::breadth_first(Coord fromxy, Coord toxy)
+{
     route_.clear();
     clear_crossroads();
     sum_distance_ = 0;
@@ -448,29 +458,20 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
 
                 neighbor.first->state = GREY;
                 neighbor.first->previous = current;
+                neighbor.first->temp_id = neighbor.second->id;
 
-                current->distance = distBetween(neighbor.first->coordinate, current->coordinate);
-
-                neighbor.first->temp_id =   neighbor.second->id;
+                current->distance = distBetween(current->coordinate, neighbor.first->coordinate );
+                qDebug() << current->distance;
 
                 paths.push(neighbor.first);
             }
         }
         current->state = BLACK;
     }
-
-    if ( destination_found == true ) {
-        find_the_path(paths, &crossroads_[toxy], &crossroads_[fromxy]);
-    }
-
-    if ( route_.size() == 0 ){
-        return {};
-    }
-
-    return route_;
+    return destination_found;
 }
 
-void Datastructures::find_the_path(std::queue<Crossroad*> paths, Crossroad *end, Crossroad *current)
+void Datastructures::find_the_path(Crossroad *end, Crossroad *current)
 {
     if ( current == end ) {
         sum_distance_ += current->distance;
@@ -483,7 +484,7 @@ void Datastructures::find_the_path(std::queue<Crossroad*> paths, Crossroad *end,
         else                        { sum_distance_ += current->distance; }
 
         route_.push_back({ current->coordinate, current->temp_id, sum_distance_ });
-        find_the_path(paths, end, current->previous);
+        find_the_path(end, current->previous);
     }
 }
 
@@ -514,60 +515,15 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_least_cro
          crossroads_.find(toxy) == crossroads_.end() ) {
         return {{NO_COORD, NO_WAY, NO_DISTANCE}};
     }
-    /*
-    route_.clear();
-    clear_crossroads();
-    sum_distance_ = 0;
-    bool destination_found = false;
 
-    std::queue<Crossroad*> paths;
-
-    crossroads_[toxy].state = GREY;
-    paths.push(&crossroads_[toxy]);
-
-    // BFS algorithm
-    while ( paths.size() > 0 && destination_found == false ) {
-
-        Crossroad* current = paths.front();
-        paths.pop();
-
-        for ( auto& neighbor : current->connections ) {
-
-            if ( neighbor.first->state == WHITE ) {
-
-                // Check if this is the destination
-                if ( neighbor.first->coordinate == fromxy ) {
-                    destination_found = true;
-                }
-
-                neighbor.first->state = GREY;
-                neighbor.first->previous = current;
-
-                current->distance = distBetween(neighbor.first->coordinate, current->coordinate);
-
-                // Check the id
-                for ( const auto &pair : crossroads_[neighbor.first->coordinate].connections ) {
-                    if ( pair.second->coords[0] == neighbor.first->coordinate &&
-                         pair.second->coords.back() == current->coordinate ) {
-                        neighbor.first->temp_way = pair.second;
-                        break;
-                    }
-                }
-
-                paths.push(neighbor.first);
-            }
-        }
-        current->state = BLACK;
-    }
-
-    if ( destination_found == true ) {
-        find_the_path(paths, &crossroads_[toxy], &crossroads_[fromxy]);
+    if ( breadth_first(fromxy, toxy) == true ) {
+        find_the_path(&crossroads_[toxy], &crossroads_[fromxy]);
     }
 
     if ( route_.size() == 0 ){
         return {};
     }
-    */
+
     return route_;
 }
 
