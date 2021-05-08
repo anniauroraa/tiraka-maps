@@ -368,14 +368,14 @@ bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
     // Create new crossroad if needed
     if ( crossroads_.find(first_coord) == crossroads_.end() ) {
 
-        Crossroad first_crossroad = { first_coord, {}, WHITE, NO_DISTANCE ,nullptr };
+        Crossroad first_crossroad = { first_coord, {}, WHITE, NO_DISTANCE, nullptr, NO_WAY };
         crossroads_.insert({first_coord, first_crossroad});
     }
 
     // Create new crossroad if needed
     if ( crossroads_.find(last_coord) == crossroads_.end() ) {
 
-        Crossroad second_crossroad = { last_coord, {}, WHITE, NO_DISTANCE ,nullptr };
+        Crossroad second_crossroad = { last_coord, {}, WHITE, NO_DISTANCE, nullptr, NO_WAY };
         crossroads_.insert({last_coord, second_crossroad});
     }
 
@@ -450,6 +450,9 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
                 neighbor.first->previous = current;
 
                 current->distance = distBetween(neighbor.first->coordinate, current->coordinate);
+
+                neighbor.first->temp_id =   neighbor.second->id;
+
                 paths.push(neighbor.first);
             }
         }
@@ -479,7 +482,7 @@ void Datastructures::find_the_path(std::queue<Crossroad*> paths, Crossroad *end,
         if ( route_.size() == 0 )   { sum_distance_ = 0; }
         else                        { sum_distance_ += current->distance; }
 
-        route_.push_back({ current->coordinate, NO_WAY, sum_distance_ });
+        route_.push_back({ current->coordinate, current->temp_id, sum_distance_ });
         find_the_path(paths, end, current->previous);
     }
 }
@@ -490,6 +493,7 @@ void Datastructures::clear_crossroads()
         crossroad.second.state = WHITE;
         crossroad.second.distance = NO_DISTANCE;
         crossroad.second.previous = nullptr;
+        crossroad.second.temp_id = NO_WAY;
     }
 }
 
@@ -506,8 +510,65 @@ bool Datastructures::remove_way(WayID id)
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_least_crossroads(Coord fromxy, Coord toxy)
 {
-    // Replace this comment with your implementation
-    return {{NO_COORD, NO_WAY, NO_DISTANCE}};
+    if ( crossroads_.find(fromxy) == crossroads_.end() ||
+         crossroads_.find(toxy) == crossroads_.end() ) {
+        return {{NO_COORD, NO_WAY, NO_DISTANCE}};
+    }
+    /*
+    route_.clear();
+    clear_crossroads();
+    sum_distance_ = 0;
+    bool destination_found = false;
+
+    std::queue<Crossroad*> paths;
+
+    crossroads_[toxy].state = GREY;
+    paths.push(&crossroads_[toxy]);
+
+    // BFS algorithm
+    while ( paths.size() > 0 && destination_found == false ) {
+
+        Crossroad* current = paths.front();
+        paths.pop();
+
+        for ( auto& neighbor : current->connections ) {
+
+            if ( neighbor.first->state == WHITE ) {
+
+                // Check if this is the destination
+                if ( neighbor.first->coordinate == fromxy ) {
+                    destination_found = true;
+                }
+
+                neighbor.first->state = GREY;
+                neighbor.first->previous = current;
+
+                current->distance = distBetween(neighbor.first->coordinate, current->coordinate);
+
+                // Check the id
+                for ( const auto &pair : crossroads_[neighbor.first->coordinate].connections ) {
+                    if ( pair.second->coords[0] == neighbor.first->coordinate &&
+                         pair.second->coords.back() == current->coordinate ) {
+                        neighbor.first->temp_way = pair.second;
+                        break;
+                    }
+                }
+
+                paths.push(neighbor.first);
+            }
+        }
+        current->state = BLACK;
+    }
+
+    if ( destination_found == true ) {
+        find_the_path(paths, &crossroads_[toxy], &crossroads_[fromxy]);
+    }
+
+    if ( route_.size() == 0 ){
+        return {};
+    }
+    */
+    return route_;
 }
 
 std::vector<std::tuple<Coord, WayID> > Datastructures::route_with_cycle(Coord fromxy)

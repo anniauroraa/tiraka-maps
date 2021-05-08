@@ -238,28 +238,36 @@ public:
 
     // Phase 2 operations
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: For loop makes it's performance linear
     std::vector<WayID> all_ways();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Everything is constant but finding the right
+    // index from unordered_map is linear in worst case but constant on average
     bool add_way(WayID id, std::vector<Coord> coords);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance:O(n) ≈ Θ(1)
+    // Short rationale for estimate: Everything is constant but finding the right
+    // index from unordered_map is linear in worst case but constant on average.
+    // For loop is also linear at worst case but in practice it never goes through n amount of data
     std::vector<std::pair<WayID, Coord>> ways_from(Coord xy);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n) ≈ Θ(1)
+    // Short rationale for estimate: Everything is constant but finding the right
+    // index from unordered_map is linear in worst case but constant on average
     std::vector<Coord> get_way_coords(WayID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(1)
+    // Short rationale for estimate: .clear() operation is constant
     void clear_ways();
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n^2) ≈ Θ(n)
+    // Short rationale for estimate: There's for loop nested in while loop so
+    // the worst case is exponential. Usually the nested for loop is never really
+    // heavy (because there is only few connections per crossroad) so in practise
+    // the nested for loop doesn't affect the performance and so it is linear on average.
+    // linear performance comes from private function clear_crossroads().
     std::vector<std::tuple<Coord, WayID, Distance>> route_any(Coord fromxy, Coord toxy);
 
     // Non-compulsory operations
@@ -331,15 +339,25 @@ private:
         node state = WHITE;
         Distance distance = NO_DISTANCE;
         Crossroad* previous = nullptr;
+        WayID temp_id = NO_WAY;
     };
 
     std::unordered_map<Coord, Crossroad, CoordHash> crossroads_;
     std::vector<std::tuple<Coord, WayID, Distance>> route_;
     Distance sum_distance_ = 0;
 
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Goes through n amount of data recursively
     void find_the_path(std::queue<Crossroad*> paths, Crossroad* end, Crossroad* current);
+
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: Goes through for loop
     void clear_crossroads();
+
+    // Estimate of performance: O(1)
+    // Short rationale for estimate: Everything is constant
     int distBetween(Coord coord1, Coord coord2);
+
 };
 
 #endif // DATASTRUCTURES_HH
