@@ -361,21 +361,20 @@ bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
 
     Coord first_coord = coords[0]; Coord last_coord = coords.back();
 
-    Way new_way = { id, coords };
+    Way new_way = { id, coords, calculate_distance(coords)};
     ways_.insert({id, new_way});
-
 
     // Create new crossroad if needed
     if ( crossroads_.find(first_coord) == crossroads_.end() ) {
 
-        Crossroad first_crossroad = { first_coord, {}, WHITE, NO_DISTANCE, nullptr, NO_WAY };
+        Crossroad first_crossroad = { first_coord, {}, WHITE };
         crossroads_.insert({first_coord, first_crossroad});
     }
 
     // Create new crossroad if needed
     if ( crossroads_.find(last_coord) == crossroads_.end() ) {
 
-        Crossroad second_crossroad = { last_coord, {}, WHITE, NO_DISTANCE, nullptr, NO_WAY };
+        Crossroad second_crossroad = { last_coord, {}, WHITE };
         crossroads_.insert({last_coord, second_crossroad});
     }
 
@@ -424,7 +423,6 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_any(Coord
     if ( breadth_first(fromxy, toxy) == true ) {
         find_the_path(&crossroads_[toxy], &crossroads_[fromxy]);
     }
-    if ( route_.size() == 0 ){ return {}; }
 
     return route_;
 }
@@ -457,12 +455,8 @@ bool Datastructures::breadth_first(Coord fromxy, Coord toxy)
                 }
 
                 neighbor.first->state = GREY;
-                neighbor.first->previous = current;
-                neighbor.first->temp_id = neighbor.second->id;
-
-                current->distance = distBetween(current->coordinate, neighbor.first->coordinate );
-                qDebug() << current->distance;
-
+                neighbor.first->next = current;
+                neighbor.first->temp_way = neighbor.second;
                 paths.push(neighbor.first);
             }
         }
@@ -471,20 +465,17 @@ bool Datastructures::breadth_first(Coord fromxy, Coord toxy)
     return destination_found;
 }
 
-void Datastructures::find_the_path(Crossroad *end, Crossroad *current)
+void Datastructures::find_the_path(Crossroad *toxy, Crossroad *current)
 {
-    if ( current == end ) {
-        sum_distance_ += current->distance;
+    if ( current == toxy ) {
         route_.push_back({ current->coordinate, NO_WAY, sum_distance_ });
         return;
     }
-    else if ( current->previous == nullptr ) { return; }
+    else if ( current->next == nullptr ) { return; }
     else {
-        if ( route_.size() == 0 )   { sum_distance_ = 0; }
-        else                        { sum_distance_ += current->distance; }
-
-        route_.push_back({ current->coordinate, current->temp_id, sum_distance_ });
-        find_the_path(end, current->previous);
+        route_.push_back({ current->coordinate, current->temp_way->id, sum_distance_ });
+        sum_distance_ += current->temp_way->d;
+        find_the_path(toxy, current->next);
     }
 }
 
@@ -492,15 +483,22 @@ void Datastructures::clear_crossroads()
 {
     for ( auto& crossroad : crossroads_ ) {
         crossroad.second.state = WHITE;
-        crossroad.second.distance = NO_DISTANCE;
-        crossroad.second.previous = nullptr;
-        crossroad.second.temp_id = NO_WAY;
+        //crossroad.second.distance = NO_DISTANCE;
+        crossroad.second.next = nullptr;
+        crossroad.second.temp_way = nullptr;
     }
 }
 
-int Datastructures::distBetween(Coord coord1, Coord coord2)
+int Datastructures::calculate_distance(std::vector<Coord> coords)
 {
-    return floor(sqrt(pow((coord1.x - coord2.x), 2) + pow((coord1.y - coord2.y), 2)));
+    Distance d = 0;
+    unsigned long index = 1;
+    while ( index < coords.size() ) {
+        d += floor(sqrt(pow((coords[index-1].x - coords[index].x), 2)
+                   + pow((coords[index-1].y - coords[index].y), 2)));
+        index++;
+    }
+    return d;
 }
 
 bool Datastructures::remove_way(WayID id)
@@ -518,10 +516,6 @@ std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_least_cro
 
     if ( breadth_first(fromxy, toxy) == true ) {
         find_the_path(&crossroads_[toxy], &crossroads_[fromxy]);
-    }
-
-    if ( route_.size() == 0 ){
-        return {};
     }
 
     return route_;

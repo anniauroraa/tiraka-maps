@@ -228,6 +228,7 @@ public:
     // Estimate of performance: O(n) ≈ Θ(1)
     // Short rationale for estimate: Everything is constant but finding the right
     // index from unordered_map is linear in worst case but constant on average
+    // Also uses calculate_distance() so it might make this function linear too
     bool add_way(WayID id, std::vector<Coord> coords);
 
     // Estimate of performance:O(n) ≈ Θ(1)
@@ -251,7 +252,6 @@ public:
     // the nested for loop is never really heavy (because there is only few connections per crossroad)
     // so in practise the nested for loop doesn't affect the performance and so it is
     // linear on average. linear performance comes from private function clear_crossroads().
-
     std::vector<std::tuple<Coord, WayID, Distance>> route_any(Coord fromxy, Coord toxy);
 
     // Non-compulsory operations
@@ -312,6 +312,7 @@ private:
     struct Way {
         WayID id = NO_WAY;
         std::vector<Coord> coords;
+        Distance d = NO_DISTANCE;
     };
 
     std::unordered_map<WayID, Way> ways_;
@@ -321,9 +322,8 @@ private:
         std::vector<std::pair<Crossroad*, Way*>> connections;
 
         node state = WHITE;
-        Distance distance = NO_DISTANCE;
-        Crossroad* previous = nullptr;
-        WayID temp_id = NO_WAY;
+        Crossroad* next = nullptr;
+        Way* temp_way = nullptr;
     };
 
     std::unordered_map<Coord, Crossroad, CoordHash> crossroads_;
@@ -340,15 +340,16 @@ private:
 
     // Estimate of performance: O(n)
     // Short rationale for estimate: Goes through n amount of data recursively
-    void find_the_path(Crossroad* end, Crossroad* current);
+    void find_the_path(Crossroad* toxy, Crossroad* current);
 
     // Estimate of performance: O(n)
     // Short rationale for estimate: Goes through for loop
     void clear_crossroads();
 
-    // Estimate of performance: O(1)
-    // Short rationale for estimate: Everything is constant
-    int distBetween(Coord coord1, Coord coord2);
+    // Estimate of performance: O(n)
+    // Short rationale for estimate: For loop makes the function linear compared
+    // to the data it receives.
+    Distance calculate_distance(std::vector<Coord>);
 
 };
 
