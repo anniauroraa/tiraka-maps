@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <list>
 #include <queue>
+#include <iterator>
 
 #include <QDebug>
 
@@ -250,18 +251,24 @@ public:
     // Short rationale for estimate: Functon uses breadth_first(). There's for loop
     // nested in while loop so the worst case is exponential. Usually
     // the nested for loop is never really heavy (because there is only few connections per crossroad)
-    // so in practise the nested for loop doesn't affect the performance and so it is
+    // so in practice the nested for loop doesn't affect the performance and so it is
     // linear on average. linear performance comes from private function clear_crossroads().
     std::vector<std::tuple<Coord, WayID, Distance>> route_any(Coord fromxy, Coord toxy);
 
     // Non-compulsory operations
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n^2) ≈ Θ(n)
+    // Short rationale for estimate: Finding the right index in a for loop makes
+    // the worst case exponential. Finding the right index from unordered_map
+    // is constant on average so the average performance of the function is linear
     bool remove_way(WayID id);
 
-    // Estimate of performance:
-    // Short rationale for estimate:
+    // Estimate of performance: O(n^2) ≈ Θ(n)
+    // Short rationale for estimate: Functon uses breadth_first(). There's for loop
+    // nested in while loop so the worst case is exponential. Usually
+    // the nested for loop is never really heavy (because there is only few connections per crossroad)
+    // so in practice the nested for loop doesn't affect the performance and so it is
+    // linear on average. linear performance comes from private function clear_crossroads().
     std::vector<std::tuple<Coord, WayID, Distance>> route_least_crossroads(Coord fromxy, Coord toxy);
 
     // Estimate of performance:
@@ -334,7 +341,7 @@ private:
     // Short rationale for estimate: There's for loop nested in while loop so the worst
     // case is exponential. Usually the nested for loop is never really heavy
     // (because there is only few connections per crossroad)
-    // so in practise the nested for loop doesn't affect the performance and so it is
+    // so in practice the nested for loop doesn't affect the performance and so it is
     // linear on average. linear performance comes from private function clear_crossroads().
     bool breadth_first(Coord fromxy, Coord toxy);
 

@@ -354,7 +354,7 @@ std::vector<WayID> Datastructures::all_ways()
 }
 
 bool Datastructures::add_way(WayID id, std::vector<Coord> coords)
-{   
+{
     if ( ways_.find(id) != ways_.end() ) {              // O(n) ≈ Θ(1)
         return false;
     }
@@ -483,7 +483,6 @@ void Datastructures::clear_crossroads()
 {
     for ( auto& crossroad : crossroads_ ) {
         crossroad.second.state = WHITE;
-        //crossroad.second.distance = NO_DISTANCE;
         crossroad.second.next = nullptr;
         crossroad.second.temp_way = nullptr;
     }
@@ -503,8 +502,45 @@ int Datastructures::calculate_distance(std::vector<Coord> coords)
 
 bool Datastructures::remove_way(WayID id)
 {
-    // Replace this comment with your implementation
-    return false;
+    if ( ways_.find(id) == ways_.end() ) {
+        return false;
+    }
+    Coord first_coord = ways_[id].coords[0];
+    Coord last_coord = ways_[id].coords.back();
+
+    // Delete crossroad if there's only one way that leads to it
+    if ( crossroads_[first_coord].connections.size() == 1 ) {
+        crossroads_.erase(first_coord);
+    }
+    // Or just delete connection to the crossroad
+    else {
+        int index = 0;
+        for ( auto& way : crossroads_[first_coord].connections ) {
+            if ( way.second->id == id ) {
+                crossroads_[first_coord].connections.erase(
+                            crossroads_[first_coord].connections.begin()+index);
+            }
+            index++;
+        }
+    }
+    // Same for the other crossroad
+    if ( crossroads_[last_coord].connections.size() == 1 ) {
+        crossroads_.erase(last_coord);
+    }
+    else {
+        int index = 0;
+        for ( auto& way : crossroads_[last_coord].connections ) {
+            if ( way.second->id == id ) {
+                crossroads_[last_coord].connections.erase(
+                            crossroads_[last_coord].connections.begin()+index);
+            }
+            index++;
+        }
+    }
+    // Remove the way
+    ways_.erase(id);
+
+    return true;
 }
 
 std::vector<std::tuple<Coord, WayID, Distance> > Datastructures::route_least_crossroads(Coord fromxy, Coord toxy)
