@@ -17,3 +17,4 @@ datastructures.hh julkinen rajapinta, mainprogram.hh, mainprogram.cc, mainwindow
 ----
 Projektissa harjoiteltiin STL algoritmien käyttöä tehokkaasti ja omien algoritmien luomista. Tietorakenteiden suunnittelu ja toteutus myöskin olennainen osa. Projektin aiheena on retkikartat, jonne on tarkoitus lisätätä erilaisia retkipaikkoja, alueita ja reittejä niiden välillä.
 
+![mainwindow](https://user-images.githubusercontent.com/58393890/206413494-ef6946fd-559d-41a3-bf32-88bd875fa9b9.png)
